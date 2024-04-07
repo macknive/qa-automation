@@ -1,7 +1,7 @@
-##Installation
+## Installation
 
 npm install
 
-##Usage
+## Usage
 
 npx cypress open
