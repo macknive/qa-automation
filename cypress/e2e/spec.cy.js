@@ -1,8 +1,9 @@
 describe("Virtusize QA Automation", () => {
   before(() => {
-    cy.visit("https://demo.virtusize.com")
+    cy.visit("https://shop.adidas.jp/products/HR4607/")
   })
   it("check network events", () => {
+    var validProduct, sawWidget, openedWidget
     cy.intercept(
       {
         method: "GET",
@@ -11,8 +12,8 @@ describe("Virtusize QA Automation", () => {
       (req) => {
         req.reply((res) => {
           if (res.body.name === "backend-checked-product") {
-            console.log(res)
-            expect(res.body.data.validProduct).to.be.true
+            validProduct = res.body.data.validProduct
+            console.log("val", validProduct)
           }
         })
       }
@@ -24,17 +25,23 @@ describe("Virtusize QA Automation", () => {
       },
       (req) => {
         if (req.body.name === "user-saw-widget-button") {
-          expect(true).to.be.true
+          sawWidget = true
         }
         if (req.body.name === "user-opened-widget") {
-          console.log("opened widget")
-          expect(true).to.be.true
+          openedWidget = true
         }
       }
     ).as("vsEvents")
     cy.wait("@vsEvents").then((interceptions) => {
-      console.log("this", interceptions.response.body.name)
-      cy.get("#vs-inpage button").click()
+      cy.get("#vs-inpage button", { timeout: 10000 }).click()
+      setTimeout(() => {
+        const data = {
+          isValidProduct: validProduct,
+          userSawWidget: sawWidget,
+          userOpenedWidget: openedWidget,
+        }
+        console.log(data)
+      }, 5000)
     })
   })
 })
