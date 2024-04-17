@@ -16,6 +16,7 @@ describe("Virtusize QA Automation", () => {
             console.log("val", validProduct)
           }
         })
+        //get response value here
       }
     )
     cy.intercept(
@@ -30,10 +31,12 @@ describe("Virtusize QA Automation", () => {
         if (req.body.name === "user-opened-widget") {
           openedWidget = true
         }
+        //track events here
       }
     ).as("vsEvents")
     cy.wait("@vsEvents").then((interceptions) => {
       cy.get("#vs-inpage button", { timeout: 10000 }).click()
+      // add clickables here
       setTimeout(() => {
         const data = {
           isValidProduct: validProduct,
