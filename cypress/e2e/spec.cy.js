@@ -9,7 +9,13 @@ const bodyProceed =
 
 describe("Virtusize QA Automation", () => {
   before(() => {
-    cy.visit("https://shop.adidas.jp/products/HR4607/")
+    //priority **
+    //get random pdp from backend API fetch
+    //loop through store list and use backend API random product
+
+    const url = "https://shop.adidas.jp/products/HR4607/"
+    categoryToCheck = "" //custom category
+    cy.visit(url)
   })
   it("check network events", () => {
     var validProduct,
@@ -26,6 +32,8 @@ describe("Virtusize QA Automation", () => {
       },
       (req) => {
         req.reply((res) => {
+          //add desktop/mobile.source.js call
+          //here -->
           if (res.body.name === "backend-checked-product") {
             validProduct = res.body.data.validProduct
           }
@@ -51,15 +59,21 @@ describe("Virtusize QA Automation", () => {
         if (req.body.name === "user-created-silhouette") {
           createdSilhouette = true
         }
+        //add user-selected-size here
+
         if (req.body.name === "user-opened-panel-tryiton") {
           tryItOn = true
         }
+        //detect if there is user-saw-visor exception event
+
         //intercept response
         req.reply((res) => {
           if (
             res.url.includes("size-recommendation.virtusize") &&
             res.statusCode === 200
           ) {
+            //screenshot of silhouette addition
+            expect(true).to.be.true
             srapi = true
           }
         })
@@ -75,6 +89,7 @@ describe("Virtusize QA Automation", () => {
         .click()
         .then(() => {
           setTimeout(() => {
+            //TODO: separate section to PDC, data science and events
             const data = {
               isValidProduct: validProduct,
               userSawWidget: sawWidget,
@@ -85,6 +100,8 @@ describe("Virtusize QA Automation", () => {
               sizeRecommendation: srapi,
             }
             console.log(data)
+            //output only on slack which stores have error
+            //all test loops and ok add a message
           }, 3000)
         })
     })
