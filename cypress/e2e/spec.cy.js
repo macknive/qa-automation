@@ -81,7 +81,7 @@ describe("Virtusize QA Automation", () => {
     ).as("vsEvents")
     cy.wait("@vsEvents").then((interceptions) => {
       cy.get(inpageButton, { timeout: 15000 }).click()
-      cy.get(privacyPolicyCheck, { timeout: 10000 }).next().click()
+      cy.get(privacyPolicyCheck, { timeout: 15000 }).next().click()
       cy.get(onBoardingNext, { timeout: 5000 }).click()
       cy.get(genderProceed, { timeout: 5000 })
         .first()
@@ -113,8 +113,8 @@ describe("Virtusize QA Automation", () => {
 
 function sendToSlack(data) {
   console.log("sending to slack")
-  const token = "xoxb-7181744555446-7173990631111-PMyEuVs2db2gifSZQVhvAk6f"
-  const channel = "C075JB3PFFC"
+  const token = Cypress.env("slack_token")
+  const channel = Cypress.env("slack_channel")
   let message
 
   if (typeof data === "object" && data !== null) {
