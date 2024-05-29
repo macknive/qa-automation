@@ -4,8 +4,8 @@ const onBoardingNext =
   "#vs-aoyama-main-modal > div[class^='_root'] > div:nth-child(3) > div > div:nth-child(3) > button"
 const genderProceed =
   "#vs-aoyama-main-modal > div[class^='_root'] > div:nth-child(3) > div > div:nth-child(4) > button"
-const bodyProceed =
-  "#vs-aoyama-main-modal > div[class^='_root'] > div:nth-child(3) > div > div:nth-child(5) > button"
+// const bodyProceed =
+//   "#vs-aoyama-main-modal > div[class^='_root'] > div:nth-child(3) > div > div:nth-child(5) > button"
 
 describe("Virtusize QA Automation", () => {
   before(() => {
@@ -13,8 +13,8 @@ describe("Virtusize QA Automation", () => {
     //get random pdp from backend API fetch
     //loop through store list and use backend API random product
 
-    const url = "https://shop.adidas.jp/products/HR4607/"
-    categoryToCheck = "" //custom category
+    const url = "https://www.underarmour.co.jp/f/dsg-1056685"
+    //categoryToCheck = "" //custom category
     cy.visit(url)
   })
   it("check network events", () => {
@@ -80,15 +80,17 @@ describe("Virtusize QA Automation", () => {
       }
     ).as("vsEvents")
     cy.wait("@vsEvents").then((interceptions) => {
-      cy.get(inpageButton, { timeout: 20000 }).click()
-      cy.get(privacyPolicyCheck, { timeout: 5000 }).next().click()
+      cy.get(inpageButton, { timeout: 15000 }).click()
+      cy.get(privacyPolicyCheck, { timeout: 10000 }).next().click()
       cy.get(onBoardingNext, { timeout: 5000 }).click()
-      cy.get(genderProceed, { timeout: 5000 }).first().click()
-      cy.get(bodyProceed, { timeout: 5000 })
+      cy.get(genderProceed, { timeout: 5000 })
         .first()
         .click()
+        //cy.get(bodyProceed, { timeout: 10000 })
+        // .first()
+        // .click()
         .then(() => {
-          setTimeout(() => {
+          cy.wait(3000).then(() => {
             //TODO: separate section to PDC, data science and events
             const data = {
               isValidProduct: validProduct,
@@ -100,10 +102,32 @@ describe("Virtusize QA Automation", () => {
               sizeRecommendation: srapi,
             }
             console.log(data)
-            //output only on slack which stores have error
-            //all test loops and ok add a message
-          }, 3000)
+            sendToSlack(data)
+          })
         })
+
+      console.log("done")
     })
   })
 })
+
+function sendToSlack(data) {
+  console.log("sending to slack")
+  const token = "xoxb-7181744555446-7173990631111-PMyEuVs2db2gifSZQVhvAk6f"
+  const channel = "C075JB3PFFC"
+  let message
+
+  if (typeof data === "object" && data !== null) {
+    message = JSON.stringify(data)
+  } else {
+    message = "Invalid data"
+  }
+
+  console.log("message: ", message)
+
+  cy.task("postMessageToSlack", {
+    token,
+    channel,
+    message,
+  })
+}
