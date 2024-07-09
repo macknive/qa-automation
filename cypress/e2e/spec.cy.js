@@ -13,7 +13,7 @@ describe("Virtusize QA Automation", () => {
     //get random pdp from backend API fetch
     //loop through store list and use backend API random product
 
-    const url = "https://www.underarmour.co.jp/f/dsg-1056685"
+    const url = "https://demo.virtusize.com/"
     //categoryToCheck = "" //custom category
     cy.visit(url)
   })
@@ -102,7 +102,9 @@ describe("Virtusize QA Automation", () => {
               sizeRecommendation: srapi,
             }
             console.log(data)
-            sendToSlack(data)
+            // temporary disabled sending to slack
+            // need to get slack token from Rish
+            //sendToSlack(data)
           })
         })
 
